@@ -1,0 +1,17 @@
+- name: Stop and disable firewalld with reporting
+  hosts: all
+  become: yes
+  gather_facts: no
+  ignore_unreachable: yes
+  service_name: firewalld
+
+  tasks:
+    - name: Gather service facts
+      ansible.builtin.service_facts:
+
+    - name: Stop and disable firewalld if present
+      ansible.builtin.service:
+        name: firewalld
+        state: stopped
+        enabled: false
+      when: "'"{{ service_name }}"' in ansible_facts.services"
