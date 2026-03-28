@@ -1,14 +1,14 @@
 ---
 - name: Stop and disable firewalld safely on RHEL 9
   hosts: all
-  become: yes
   gather_facts: no
+  become: yes
   ignore_unreachable: yes
-
   vars:
     service_name: firewalld
 
   tasks:
+
     - name: Check if firewalld service exists
       ansible.builtin.shell: |
         if systemctl list-unit-files --all | grep -qw {{ service_name }}.service; then
@@ -24,19 +24,21 @@
       ansible.builtin.shell: |
         systemctl stop {{ service_name }}
         systemctl disable {{ service_name }}
-      when: firewalld_check.stdout == "present"
+      when: firewalld_check is defined and firewalld_check.stdout == "present"
       register: firewalld_action
       ignore_errors: yes
 
     - name: Set host status
       ansible.builtin.set_fact:
         host_status: >-
-          {% if firewalld_check is failed %}
+          {% if firewalld_check is not defined %}
+            unreachable
+          {% elif firewalld_check is failed %}
             failed
-          {% elif firewalld_check.stdout == "absent" %}
-            skipped
-          {% else %}
+          {% elif firewalld_check.stdout == "present" %}
             success
+          {% else %}
+            skipped
           {% endif %}
 
 - name: Generate final report
