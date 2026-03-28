@@ -14,4 +14,4 @@
         name: firewalld
         state: stopped
         enabled: false
-      when: "'"{{ service_name }}"' in ansible_facts.services"
+      when: '"{{ service_name }}" in ansible_facts.services'
