@@ -10,9 +10,9 @@
     - name: Gather service facts
       ansible.builtin.service_facts:
 
-    - name: Stop and disable firewalld if present
+    - name: Stop and disable firewalld if active
       ansible.builtin.service:
-        name: firewalld
+        name: "{{ service_name }}"
         state: stopped
         enabled: false
-      when: '"{{ service_name }}" in ansible_facts.services'
+      when: "'{{ service_name }}' in ansible_facts.services"
