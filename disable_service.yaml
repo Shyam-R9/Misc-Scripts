@@ -3,7 +3,8 @@
   become: yes
   gather_facts: no
   ignore_unreachable: yes
-  service_name: firewalld
+  vars:
+    service_name: firewalld
 
   tasks:
     - name: Gather service facts
